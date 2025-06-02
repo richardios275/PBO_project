@@ -1,0 +1,322 @@
+[
+  {
+    "name": "Electric discharge",
+    "description": "A powerful electric discharge",
+    "type": "electric",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Fireball",
+    "description": "A powerful fireball",
+    "type": "fire",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Ice shard",
+    "description": "A powerful ice shard",
+    "type": "ice",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Water jet",
+    "description": "A powerful water jet",
+    "type": "water",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Spray acid",
+    "description": "A powerful acid spray",
+    "type": "poison",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Bite",
+    "description": "A powerful bite",
+    "type": "normal",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Scratch",
+    "description": "A powerful scratch",
+    "type": "normal",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Slash",
+    "description": "A powerful slash",
+    "type": "normal",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Tsunami",
+    "description": "A powerful tsunami",
+    "type": "water",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Spruce",
+    "description": "A powerful spruce",
+    "type": "grass",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 15,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Vine",
+    "description": "A powerful vine",
+    "type": "grass",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Frost",
+    "description": "A powerful frost",
+    "type": "ice",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Throw stone",
+    "description": "A powerful throw stone",
+    "type": "rock",
+    "cooldown": 0,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "none"
+  },
+  {
+    "name": "Heal",
+    "description": "A powerful heal",
+    "type": "normal",
+    "cooldown": 1,
+    "duration": 0,
+    "power": 10,
+    "level": 1,
+    "effect": "heal"
+  },
+  {
+    "name": "Rain",
+    "description": "A powerful rain",
+    "type": "water",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 10,
+    "level": 2,
+    "effect": "wet"
+  },
+  {
+    "name": "Thuderstorm",
+    "description": "A powerful thunderstorm",
+    "type": "electric",
+    "cooldown": 1,
+    "duration": 0,
+    "power": 15,
+    "level": 2,
+    "effect": "none"
+  },
+  {
+    "name": "Shock",
+    "description": "A powerful shock",
+    "type": "electric",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 15,
+    "level": 2,
+    "effect": "shock"
+  },
+  {
+    "name": "Volcano",
+    "description": "A powerful volcano",
+    "type": "fire",
+    "cooldown": 1,
+    "duration": 0,
+    "power": 15,
+    "level": 2,
+    "effect": "none"
+  },
+  {
+    "name": "Breath of fire",
+    "description": "A powerful breath of fire",
+    "type": "fire",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 15,
+    "level": 2,
+    "effect": "burn"
+  },
+  {
+    "name": "Blaze",
+    "description": "A powerful blaze",
+    "type": "fire",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 15,
+    "level": 2,
+    "effect": "burn"
+  },
+  {
+    "name": "Entangle",
+    "description": "A powerful entangle",
+    "type": "grass",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 15,
+    "level": 2,
+    "effect": "entangle"
+  },
+  {
+    "name": "Blizzard",
+    "description": "A powerful blizzard",
+    "type": "ice",
+    "cooldown": 1,
+    "duration": 0,
+    "power": 15,
+    "level": 2,
+    "effect": "none"
+  },
+  {
+    "name": "Freeze",
+    "description": "A powerful freeze",
+    "type": "ice",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 15,
+    "level": 2,
+    "effect": "freeze"
+  },
+  {
+    "name": "Ice shield",
+    "description": "A powerful ice shield",
+    "type": "ice",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 15,
+    "level": 2,
+    "effect": "buff_defense"
+  },
+  {
+    "name": "Acid rain",
+    "description": "A powerful acid rain",
+    "type": "poison",
+    "cooldown": 1,
+    "duration": 0,
+    "power": 15,
+    "level": 2,
+    "effect": "none"
+  },
+  {
+    "name": "Toxic waste",
+    "description": "A powerful toxic waste",
+    "type": "poison",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 20,
+    "level": 2,
+    "effect": "poison"
+  },
+  {
+    "name": "Hurl rock",
+    "description": "A powerful hurl rock",
+    "type": "rock",
+    "cooldown": 1,
+    "duration": 0,
+    "power": 15,
+    "level": 2,
+    "effect": "none"
+  },
+  {
+    "name": "Stone cask",
+    "description": "A powerful stone cask",
+    "type": "rock",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 15,
+    "level": 2,
+    "effect": "buff_defense"
+  },
+  {
+    "name": "Overtime heal",
+    "description": "A powerful overtime heal",
+    "type": "normal",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 10,
+    "level": 2,
+    "effect": "heal"
+  },
+  {
+    "name": "Rage",
+    "description": "A powerful rage",
+    "type": "normal",
+    "cooldown": 2,
+    "duration": 1,
+    "power": 10,
+    "level": 2,
+    "effect": "buff_attack"
+  },
+  {
+    "name": "Plague",
+    "description": "A powerful plague",
+    "type": "poison",
+    "cooldown": 2,
+    "duration": 2,
+    "power": 20,
+    "level": 3,
+    "effect": "poison"
+  },
+  {
+    "name": "Amok",
+    "description": "A powerful amok",
+    "type": "normal",
+    "cooldown": 4,
+    "duration": 2,
+    "power": 20,
+    "level": 4,
+    "effect": "buff_attack"
+  }
+]
