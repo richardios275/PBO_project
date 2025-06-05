@@ -16,6 +16,7 @@ public class BattleController {
     private Pokemon selectedPokemon;
     private int turnCounter;
     private int currentPlayerPartySize;
+    private String attackMessage;
 
     /**
      * Constructs a BattleController object to manage a battle between a Player and an Enemy Pokemon.
