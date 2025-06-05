@@ -29,6 +29,12 @@ public class BattleScreen implements Screen {
     private final Stage uiStage;
     private final BattleController battleController;
 
+    private static final float PLAYER_POKEMON_X_POSITION = 0.2f; // 20% from left
+    private static final float PLAYER_POKEMON_Y_POSITION = 0.3f; // 30% from bottom
+    private static final float ENEMY_POKEMON_X_POSITION = 0.7f; // 70% from left
+    private static final float ENEMY_POKEMON_Y_POSITION = 0.7f; // 70% from bottom
+    private static final float POKEMON_SCALE_FACTOR = 1f;
+
     //TODO redesign battle screen
 
     /**
@@ -184,10 +190,19 @@ public class BattleScreen implements Screen {
         Pokemon selectedPokemon = this.battleController.getSelectedPokemon();
         Pokemon enemyPokemon = this.battleController.getEnemyPokemon();
 
-        selectedPokemon.setPosition(300, 300);
-        enemyPokemon.setPosition(Gdx.graphics.getWidth() - 400f, Gdx.graphics.getHeight() - 400f);
-        selectedPokemon.setScale(20);
-        enemyPokemon.setScale(20);
+        // Calculate positions based on screen percentage
+        float playerX = Gdx.graphics.getWidth() * PLAYER_POKEMON_X_POSITION;
+        float playerY = Gdx.graphics.getHeight() * PLAYER_POKEMON_Y_POSITION;
+        float enemyX = Gdx.graphics.getWidth() * ENEMY_POKEMON_X_POSITION;
+        float enemyY = Gdx.graphics.getHeight() * ENEMY_POKEMON_Y_POSITION;
+
+        // Calculate scale based on screen size
+        float baseScale = Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()) * POKEMON_SCALE_FACTOR / 100f;
+
+        selectedPokemon.setPosition(playerX, playerY);
+        enemyPokemon.setPosition(enemyX, enemyY);
+        selectedPokemon.setScale(baseScale);
+        enemyPokemon.setScale(baseScale);
     }
 
     public void init() {
