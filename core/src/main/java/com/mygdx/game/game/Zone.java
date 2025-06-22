@@ -65,6 +65,8 @@ public class Zone {
 
     private void spawnPokemons(Player player, Pokedex pokedex) {
         Array<Vector2> spawnPoints = new Array<>();
+        final float POKEMON_WIDTH = 32f;
+        final float POKEMON_HEIGHT = 32f;
 
         for (RectangleMapObject area : this.pokemonSpawnAreas) {
             Rectangle rectangle = area.getRectangle();
@@ -74,8 +76,13 @@ public class Zone {
                 float y = MathUtils.random(rectangle.getY(), rectangle.getY() + rectangle.getHeight());
 
                 Pokemon pokemon = this.randomizePokemonStats(player, pokedex);
-                x += pokemon.getWidth() / 2;
-                y += pokemon.getHeight() / 2;
+
+                // Set a fixed size
+                pokemon.setSize(POKEMON_WIDTH, POKEMON_HEIGHT);
+
+                // Center the position based on fixed size
+                x += POKEMON_WIDTH / 2;
+                y += POKEMON_HEIGHT / 2;
 
                 Vector2 spawnPoint = new Vector2(x, y);
 

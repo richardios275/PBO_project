@@ -259,7 +259,7 @@ public class GameScreen implements Screen {
      * @param enemyPokemon the Pokemon that the player will fight against
      */
     public void startBattle(Pokemon enemyPokemon) {
-        this.game.setScreen(new BattleScreen(this.game, this, this.skin, this.player, enemyPokemon));
+        this.game.setScreen(new BattleScreen(this.game, this, this.skin, this.player, enemyPokemon, enemyPokemon));
     }
 
     /**
@@ -299,7 +299,7 @@ public class GameScreen implements Screen {
         }
 
         if (Constants.DEBUG && Gdx.input.isKeyPressed(Input.Keys.Z)) {
-            this.game.setScreen(new BattleScreen(this.game, this, this.skin, this.player, this.pokedex.getPokemon("bulbasaur")));
+            this.game.setScreen(new BattleScreen(this.game, this, this.skin, this.player, this.pokedex.getPokemon("bulbasaur"), this.pokedex.getPokemon("bulbasaur")));
         }
     }
 

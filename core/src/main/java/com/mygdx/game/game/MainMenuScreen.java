@@ -2,6 +2,7 @@ package com.mygdx.game.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -28,6 +29,7 @@ public class MainMenuScreen implements Screen {
     private final Table table;
     private ButtonGroup<TextButton> buttons;
     private boolean isPlayClicked;
+    private Music menuMusic;
 
     /**
      * Constructs a new MainMenuScreen.
@@ -48,6 +50,10 @@ public class MainMenuScreen implements Screen {
         this.createButtons();
         this.menu = new Stage(new ScreenViewport());
         this.menu.addActor(this.table);
+        this.menuMusic = Gdx.audio.newMusic(Gdx.files.internal("music/menu.mp3"));
+        menuMusic.setLooping(true);
+        menuMusic.setVolume(0.5f);
+        menuMusic.play();
 
         Gdx.input.setInputProcessor(this.menu);
     }

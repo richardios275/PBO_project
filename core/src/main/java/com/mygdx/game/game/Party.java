@@ -93,6 +93,10 @@ public class Party implements Iterable<Pokemon> {
         return this.pokemons.get(this.pokemons.indexOf(pokemon));
     }
 
+    public Pokemon getPokemonByIndex(int index) {
+        return this.pokemons.get(index);
+    }
+
     /**
      * Returns the first Pokemon in the party.
      * Returns null if the party is empty.

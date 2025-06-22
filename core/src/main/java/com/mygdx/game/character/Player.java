@@ -37,7 +37,7 @@ public class Player extends Actor {
         this.inventory = new Inventory();
         this.party = new Party();
         this.velocity = new Vector2();
-        this.speed = 250;
+        this.speed = 200;
         this.gold = 0;
         this.collectedPokemons = 0;
 
@@ -154,11 +154,11 @@ public class Player extends Actor {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Player: ").append(this.getName())
-                .append(System.lineSeparator())
-                .append("Gold: ").append(this.gold)
-                .append(" Collected Pokemons: ").append(this.collectedPokemons)
-                .append(System.lineSeparator())
-                .append("Party = [ ");
+            .append(System.lineSeparator())
+            .append("Gold: ").append(this.gold)
+            .append(" Collected Pokemons: ").append(this.collectedPokemons)
+            .append(System.lineSeparator())
+            .append("Party = [ ");
         for (Pokemon pokemon : this.party) {
             sb.append(pokemon.getName()).append(", ");
         }
@@ -173,5 +173,15 @@ public class Player extends Actor {
 
     public int getPartySize() {
         return this.party.getSize();
+    }
+
+    /**
+     * Get a Pokemon by its index in the party.
+     *
+     * @param i Index of the Pokemon in the party.
+     * @return Pokemon at index i.
+     */
+    public Pokemon getPokemon(int i) {
+        return this.party.getPokemonByIndex(i);
     }
 }

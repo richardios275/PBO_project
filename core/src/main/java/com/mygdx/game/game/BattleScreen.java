@@ -16,9 +16,6 @@ import com.mygdx.game.item.Pokeball;
 import com.mygdx.game.item.UsableItem;
 import com.mygdx.game.pokemon.Pokemon;
 
-/**
- * Screen class handling the rendering of the battle.
- */
 public class BattleScreen implements Screen {
     private final GameScreen gameScreen;
     private final GameClass game;
@@ -29,78 +26,76 @@ public class BattleScreen implements Screen {
     private final Stage uiStage;
     private final BattleController battleController;
 
-    //TODO redesign battle screen
+    // Track PokÃ©mon ally yang sedang aktif melakukan aksi (index 0 atau 1)
+    private int currentAllyIndex = 0;
 
-    /**
-     * Constructs a new BattleScreen.
-     *
-     * @param game         the main game instance.
-     * @param gameScreen   the screen of the game.
-     * @param skin         the skin to be used for UI elements.
-     * @param player       the player involved in the battle.
-     * @param enemyPokemon the enemy Pokemon involved in the battle.
-     */
-    public BattleScreen(GameClass game, GameScreen gameScreen, Skin skin, Player player, Pokemon enemyPokemon) {
+    public BattleScreen(GameClass game, GameScreen gameScreen, Skin skin, Player player, Pokemon enemy1, Pokemon enemy2) {
         this.gameScreen = gameScreen;
         this.game = game;
         this.skin = skin;
         this.player = player;
-
         this.buttonGroup = new ButtonGroup<>();
-
-        this.battleController = new BattleController(this.player, enemyPokemon);
-
+        this.battleController = new BattleController(this.player, enemy1, enemy2);
         this.pokemonStage = new Stage(new ScreenViewport());
         this.uiStage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this.uiStage);
-
         this.init();
     }
 
     private void updateUI() {
-        Pokemon enemyPokemon = this.battleController.getEnemyPokemon();
-        Pokemon selectedPokemon = this.battleController.getSelectedPokemon();
+        Pokemon[] enemies = this.battleController.getEnemyPokemons();
+        Pokemon[] allies = this.battleController.getAllyPokemons();
 
-        Table enemyInfo = this.uiStage.getRoot().findActor("enemyInfo");
-        Table playerInfo = this.uiStage.getRoot().findActor("playerInfo");
-        ((Label) enemyInfo.findActor("enemyName")).setText(enemyPokemon.getName());
-        ((Label) enemyInfo.findActor("enemyLevel")).setText("Lvl: " + enemyPokemon.getLevel());
-        ((Label) enemyInfo.findActor("enemyHp")).setText("HP: " + enemyPokemon.getHealth() + "/" + enemyPokemon.getMaxHealth());
+        for (int i = 0; i < 2; i++) {
+            Table enemyInfo = this.uiStage.getRoot().findActor("enemyInfo" + i);
+            ((Label) enemyInfo.findActor("enemyName" + i)).setText(enemies[i].getName());
+            ((Label) enemyInfo.findActor("enemyLevel" + i)).setText("Lvl: " + enemies[i].getLevel());
+            ((Label) enemyInfo.findActor("enemyHp" + i)).setText("HP: " + enemies[i].getHealth() + "/" + enemies[i].getMaxHealth());
 
-        ((Label) playerInfo.findActor("playerName")).setText(selectedPokemon.getName());
-        ((Label) playerInfo.findActor("playerLevel")).setText("Lvl: " + selectedPokemon.getLevel());
-        ((Label) playerInfo.findActor("playerHp")).setText("HP: " + selectedPokemon.getHealth() + "/" + selectedPokemon.getMaxHealth());
-
-        if (enemyPokemon.hasFainted()) {
-            selectedPokemon.gainExp(enemyPokemon.getLevel() * 5);
-            this.player.gainGold(enemyPokemon.getLevel() * 5);
-            this.game.setScreen(this.gameScreen);
+            Table playerInfo = this.uiStage.getRoot().findActor("playerInfo" + i);
+            ((Label) playerInfo.findActor("playerName" + i)).setText(allies[i].getName());
+            ((Label) playerInfo.findActor("playerLevel" + i)).setText("Lvl: " + allies[i].getLevel());
+            ((Label) playerInfo.findActor("playerHp" + i)).setText("HP: " + allies[i].getHealth() + "/" + allies[i].getMaxHealth());
         }
     }
 
     private void attackUI(Table buttonsTable) {
         buttonsTable.clearChildren();
-        Pokemon selectedPokemon = this.battleController.getSelectedPokemon();
+        Pokemon current = battleController.getAllyPokemons()[currentAllyIndex]; // pakai currentAllyIndex
 
-        for (Ability ability : selectedPokemon.getAbilities()) {
-            TextButton abilityButton = new TextButton(ability.getName(), this.skin);
+        for (Ability ability : current.getAbilities()) {
+            TextButton abilityButton = new TextButton(ability.getName(), skin);
             abilityButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    BattleScreen.this.battleController.attack(ability);
-                    BattleScreen.this.battleController.nextTurn();
-                    BattleScreen.this.switchMainUI(buttonsTable);
+                    // lakukan serangan dengan ability dari current ally ke musuh secara random (target musuh random)
+                    Pokemon[] enemies = battleController.getEnemyPokemons();
+
+                    // Cari musuh yang belum faint, pilih random satu
+                    int targetIndex = -1;
+                    for (int i = 0; i < enemies.length; i++) {
+                        if (!enemies[i].hasFainted()) {
+                            targetIndex = i;
+                            break;
+                        }
+                    }
+                    if (targetIndex == -1) targetIndex = 0; // fallback
+
+                    battleController.attack(ability, currentAllyIndex, targetIndex, true);
+                    battleController.nextTurn();
+                    // pindah ke ally berikutnya yang belum faint
+                    currentAllyIndex = (currentAllyIndex + 1) % 2;
+                    switchMainUI(buttonsTable);
                 }
             });
             buttonsTable.add(abilityButton).row();
         }
 
-
-        TextButton backButton = new TextButton("Back", this.skin);
+        TextButton backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                BattleScreen.this.switchMainUI(buttonsTable);
+                switchMainUI(buttonsTable);
             }
         });
         buttonsTable.add(backButton).row();
@@ -108,245 +103,161 @@ public class BattleScreen implements Screen {
 
     private void bagUI(Table buttonsTable) {
         buttonsTable.clearChildren();
-        TextButton backButton = new TextButton("Back", this.skin);
-
-        for (Item item : this.player.getInvetory()) {
-            if (item instanceof Pokeball) {
-                continue;
-            }
-            TextButton itemButton = new TextButton(item.getName(), this.skin);
+        for (Item item : player.getInvetory()) {
+            if (item instanceof Pokeball) continue;
+            TextButton itemButton = new TextButton(item.getName(), skin);
             itemButton.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (item instanceof UsableItem) {
-                        System.out.println("Using item " + item.getName());
-                        BattleScreen.this.player.useItem((UsableItem) item, BattleScreen.this.battleController.getSelectedPokemon());
-                        BattleScreen.this.switchMainUI(buttonsTable);
+                        player.useItem((UsableItem) item, battleController.getAllyPokemons()[currentAllyIndex]);
+                        switchMainUI(buttonsTable);
                     }
                 }
             });
             buttonsTable.add(itemButton).row();
         }
 
+        TextButton backButton = new TextButton("Back", skin);
         backButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                BattleScreen.this.switchMainUI(buttonsTable);
+                switchMainUI(buttonsTable);
+            }
+        });
+        buttonsTable.add(backButton).row();
+    }
+
+    private void switchPokemonUI(Table buttonsTable) {
+        buttonsTable.clearChildren();
+        for (Pokemon pokemon : player.getParty()) {
+            TextButton button = new TextButton(pokemon.getName(), skin);
+            button.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    battleController.switchPokemon(currentAllyIndex, pokemon);
+                    switchMainUI(buttonsTable);
+                }
+            });
+            buttonsTable.add(button).row();
+        }
+
+        TextButton backButton = new TextButton("Back", skin);
+        backButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                switchMainUI(buttonsTable);
             }
         });
         buttonsTable.add(backButton).row();
     }
 
     private void switchMainUI(Table buttonsTable) {
-        this.pokemonStage.clear();
+        pokemonStage.clear();
         buttonsTable.clearChildren();
         buttonsTable.defaults().size(300, 100).pad(2);
         buttonsTable.bottom().right();
-        Array<TextButton> buttons = this.buttonGroup.getButtons();
+        Array<TextButton> buttons = buttonGroup.getButtons();
         for (int i = 0; i < buttons.size; i++) {
             buttonsTable.add(buttons.get(i));
-            if (i % 2 == 1) {
-                buttonsTable.row();
-            }
+            if (i % 2 == 1) buttonsTable.row();
         }
 
-        this.setPositions();
+        setPositions();
 
-        this.pokemonStage.addActor(this.battleController.getSelectedPokemon());
-        this.pokemonStage.addActor(this.battleController.getEnemyPokemon());
-    }
-
-    private void switchPokemonUI(Table buttonsTable) {
-        buttonsTable.clearChildren();
-        for (Pokemon pokemon : this.player.getParty()) {
-            TextButton button = new TextButton(pokemon.getName(), this.skin);
-            button.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    System.out.println("Switching to " + pokemon.getName());
-                    BattleScreen.this.battleController.switchPokemon(pokemon);
-                    BattleScreen.this.switchMainUI(buttonsTable);
-                }
-            });
-            buttonsTable.add(button).row();
-        }
-        TextButton backButton = new TextButton("Back", this.skin);
-        backButton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                BattleScreen.this.switchMainUI(buttonsTable);
-            }
-        });
-        buttonsTable.add(backButton).row();
+        for (Pokemon p : battleController.getAllyPokemons()) pokemonStage.addActor(p);
+        for (Pokemon e : battleController.getEnemyPokemons()) pokemonStage.addActor(e);
     }
 
     private void setPositions() {
-        Pokemon selectedPokemon = this.battleController.getSelectedPokemon();
-        Pokemon enemyPokemon = this.battleController.getEnemyPokemon();
+        Pokemon[] allies = battleController.getAllyPokemons();
+        Pokemon[] enemies = battleController.getEnemyPokemons();
 
-        selectedPokemon.setPosition(300, 300);
-        enemyPokemon.setPosition(Gdx.graphics.getWidth() - 400f, Gdx.graphics.getHeight() - 400f);
-        selectedPokemon.setScale(20);
-        enemyPokemon.setScale(20);
+        allies[0].setPosition(250, 200);
+        allies[1].setPosition(350, 250);
+        enemies[0].setPosition(900, 500);
+        enemies[1].setPosition(1000, 550);
+
+        for (Pokemon p : allies) p.setScale(7);
+        for (Pokemon p : enemies) p.setScale(7);
     }
 
     public void init() {
-        Pokemon selectedPokemon = this.battleController.getSelectedPokemon();
-        Pokemon enemyPokemon = this.battleController.getEnemyPokemon();
-
         Table buttonsTable = new Table();
         buttonsTable.setName("buttons");
         buttonsTable.setFillParent(true);
+        uiStage.addActor(buttonsTable);
 
-        Table enemyInfoTable = new Table();
-        enemyInfoTable.setName("enemyInfo");
-        Table playerInfoTable = new Table();
-        playerInfoTable.setName("playerInfo");
+        for (int i = 0; i < 2; i++) {
+            Table enemyInfo = new Table();
+            enemyInfo.setName("enemyInfo" + i);
+            enemyInfo.setFillParent(true);
+            uiStage.addActor(enemyInfo);
 
-        enemyInfoTable.setFillParent(true);
-        playerInfoTable.setFillParent(true);
+            Label name = new Label("", skin); name.setName("enemyName" + i);
+            Label lvl = new Label("", skin); lvl.setName("enemyLevel" + i);
+            Label hp = new Label("", skin); hp.setName("enemyHp" + i);
 
-        this.uiStage.addActor(buttonsTable);
-        this.uiStage.addActor(enemyInfoTable);
-        this.uiStage.addActor(playerInfoTable);
+            enemyInfo.top(); enemyInfo.add(name).row(); enemyInfo.add(lvl); enemyInfo.add(hp);
 
-        TextButton attack = new TextButton("Fight", this.skin);
-        TextButton bag = new TextButton("Bag", this.skin);
-        TextButton switchPokemon = new TextButton("Pokemon", this.skin);
-        TextButton run = new TextButton("Run", this.skin);
+            Table playerInfo = new Table();
+            playerInfo.setName("playerInfo" + i);
+            playerInfo.setFillParent(true);
+            uiStage.addActor(playerInfo);
 
-        Label enemyPokemonName = new Label(enemyPokemon.getName(), this.skin);
-        enemyPokemonName.setName("enemyName");
+            Label pname = new Label("", skin); pname.setName("playerName" + i);
+            Label plvl = new Label("", skin); plvl.setName("playerLevel" + i);
+            Label php = new Label("", skin); php.setName("playerHp" + i);
 
-        Label enemyPokemonLevel = new Label("Lvl: " + enemyPokemon.getLevel(), this.skin);
-        enemyPokemonLevel.setName("enemyLevel");
+            playerInfo.bottom(); playerInfo.add(pname).row(); playerInfo.add(plvl); playerInfo.add(php);
+        }
 
-        Label enemyPokemonHP = new Label("HP: " + enemyPokemon.getHealth() + "/" + enemyPokemon.getMaxHealth(), this.skin);
-        enemyPokemonHP.setName("enemyHp");
-
-        Label playerPokemonName = new Label(selectedPokemon.getName(), this.skin);
-        playerPokemonName.setName("playerName");
-
-        Label playerPokemonLevel = new Label("Lvl: " + selectedPokemon.getLevel(), this.skin);
-        playerPokemonLevel.setName("playerLevel");
-
-        Label playerPokemonHP = new Label("HP: " + selectedPokemon.getHealth() + "/" + selectedPokemon.getMaxHealth(), this.skin);
-        playerPokemonHP.setName("playerHp");
-
-        enemyInfoTable.defaults().uniform().fill().pad(5);
-        enemyInfoTable.top();
-        enemyInfoTable.add(enemyPokemonName);
-        enemyInfoTable.row();
-        enemyInfoTable.add(enemyPokemonLevel);
-        enemyInfoTable.add(enemyPokemonHP);
-
-        playerInfoTable.defaults().uniform().fill().pad(5);
-        playerInfoTable.bottom();
-        playerInfoTable.add(playerPokemonName);
-        playerInfoTable.row();
-        playerInfoTable.add(playerPokemonLevel);
-        playerInfoTable.add(playerPokemonHP);
+        TextButton attack = new TextButton("Fight", skin);
+        TextButton bag = new TextButton("Bag", skin);
+        TextButton switchPokemon = new TextButton("Pokemon", skin);
+        TextButton run = new TextButton("Run", skin);
 
         attack.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                BattleScreen.this.attackUI(buttonsTable);
-            }
+            public void clicked(InputEvent e, float x, float y) { attackUI(buttonsTable); }
         });
-
         bag.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                BattleScreen.this.bagUI(buttonsTable);
-            }
+            public void clicked(InputEvent e, float x, float y) { bagUI(buttonsTable); }
         });
-
         switchPokemon.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                BattleScreen.this.switchPokemonUI(buttonsTable);
-            }
+            public void clicked(InputEvent e, float x, float y) { switchPokemonUI(buttonsTable); }
         });
-
         run.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                BattleScreen.this.game.setScreen(BattleScreen.this.gameScreen);
-            }
+            public void clicked(InputEvent e, float x, float y) { game.setScreen(gameScreen); }
         });
 
-        this.buttonGroup.add(attack, bag, switchPokemon, run);
+        buttonGroup.add(attack, bag, switchPokemon, run);
 
-        this.switchMainUI(buttonsTable);
+        switchMainUI(buttonsTable);
     }
 
-    /**
-     * Renders the screen every frame.
-     *
-     * @param delta the time in seconds since the last render.
-     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.8f, 0.8f, 0.8f, 1);
+        updateUI();
+        pokemonStage.act(delta);
+        pokemonStage.draw();
+        uiStage.act(delta);
+        uiStage.draw();
 
-        this.updateUI();
-
-        this.pokemonStage.getViewport().apply();
-        this.pokemonStage.act(delta);
-        this.pokemonStage.draw();
-
-        this.uiStage.getViewport().apply();
-        this.uiStage.act(delta);
-        this.uiStage.draw();
-
-        if (this.battleController.checkBattleEnd()) {
-            this.game.setScreen(this.gameScreen);
+        if (battleController.checkBattleEnd()) {
+            game.setScreen(gameScreen);
         }
     }
 
-    /**
-     * Triggers everytime the screen is resized.
-     * Updates the viewport of the screen.
-     *
-     * @param width  the new width in pixels.
-     * @param height the new height in pixels.
-     */
-    @Override
-    public void resize(int width, int height) {
-        this.uiStage.getViewport().update(width, height, true);
-        this.pokemonStage.getViewport().update(width, height, true);
-        this.setPositions();
+    @Override public void resize(int w, int h) {
+        uiStage.getViewport().update(w, h, true);
+        pokemonStage.getViewport().update(w, h, true);
+        setPositions();
     }
 
-    /**
-     * Called when this screen becomes the current screen for a game.
-     */
-    @Override
-    public void show() {
-        Gdx.input.setInputProcessor(this.uiStage);
-    }
-
-    /**
-     * Called when the screen should release all resources.
-     */
-    @Override
-    public void dispose() {
-        this.uiStage.dispose();
-        this.pokemonStage.dispose();
-    }
-
-    @Override
-    public void pause() {
-        //unused
-    }
-
-    @Override
-    public void resume() {
-        //unused
-    }
-
-    @Override
-    public void hide() {
-        //unused
-    }
+    @Override public void show() { Gdx.input.setInputProcessor(uiStage); }
+    @Override public void dispose() { uiStage.dispose(); pokemonStage.dispose(); }
+    @Override public void pause() {}
+    @Override public void resume() {}
+    @Override public void hide() {}
 }
