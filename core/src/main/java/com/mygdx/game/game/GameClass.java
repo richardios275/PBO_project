@@ -48,7 +48,7 @@ public class GameClass extends Game {
     public void create() {
         AbilityLoader abilityLoader = new AbilityLoader();
         this.pokedex = new Pokedex(abilityLoader);
-        this.skin = new Skin(Gdx.files.internal("skin\\skin.json"), new TextureAtlas("skin\\skin.atlas"));
+        this.skin = new Skin(Gdx.files.internal("skin/skin.json"), new TextureAtlas("skin/skin.atlas"));
         this.mainMenuScreen = new MainMenuScreen(this, this.skin, this.pokedex);
         this.settingsScreen = new SettingsScreen(this, this.skin, this.mainMenuScreen);
         if (Constants.DEBUG) {
